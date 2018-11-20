@@ -215,7 +215,7 @@ class Fluent::Plugin::DataCounterOutput < Fluent::Plugin::Output
       begin
         output_pairs[stripped_tag(tag)] = generate_fields(step, counts[tag], '', {})
       rescue => e
-        log.warn "Unexpected calculate error raised. Skip target tag.", tag: tag, data: counts[tag], error: e
+        log.warn "Unexpected calculate error raised. Skip target tag.", tag: tag, data: counts[tag], step: step, error: e
         log.warn_backtrace
       end
     end
