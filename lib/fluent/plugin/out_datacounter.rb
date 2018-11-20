@@ -120,6 +120,7 @@ class Fluent::Plugin::DataCounterOutput < Fluent::Plugin::Output
   def start
     super
 
+    log.info "Plugin with debug code version is starting.", plugin: self.class
     load_status(@tick) if @store_storage
 
     @last_checked = Fluent::Engine.now
@@ -211,7 +212,12 @@ class Fluent::Plugin::DataCounterOutput < Fluent::Plugin::Output
 
     output_pairs = {}
     counts.keys.each do |tag|
-      output_pairs[stripped_tag(tag)] = generate_fields(step, counts[tag], '', {})
+      begin
+        output_pairs[stripped_tag(tag)] = generate_fields(step, counts[tag], '', {})
+      rescue => e
+        log.warn "Unexpected calculate error raised. Skip target tag.", tag: tag, data: counts[tag], error: e
+        log.warn_backtrace
+      end
     end
     output_pairs
   end
